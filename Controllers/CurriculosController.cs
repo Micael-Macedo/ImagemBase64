@@ -21,8 +21,7 @@ namespace ProjetoBase64.Controllers
         // GET: Curriculos
         public async Task<IActionResult> Index()
         {
-            var projectBase64Context = _context.Curriculos.Include(c => c.Usuario);
-            return View(await projectBase64Context.ToListAsync());
+              return View(await _context.Curriculos.ToListAsync());
         }
 
         // GET: Curriculos/Details/5
@@ -34,7 +33,6 @@ namespace ProjetoBase64.Controllers
             }
 
             var curriculo = await _context.Curriculos
-                .Include(c => c.Usuario)
                 .FirstOrDefaultAsync(m => m.CurriculoId == id);
             if (curriculo == null)
             {
@@ -47,7 +45,6 @@ namespace ProjetoBase64.Controllers
         // GET: Curriculos/Create
         public IActionResult Create()
         {
-            ViewData["FkUsuario"] = new SelectList(_context.Usuarios, "UsuarioId", "UsuarioId");
             return View();
         }
 
@@ -56,7 +53,7 @@ namespace ProjetoBase64.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("CurriculoId,Foto,FkUsuario")] Curriculo curriculo)
+        public async Task<IActionResult> Create([Bind("CurriculoId,Nome")] Curriculo curriculo)
         {
             if (ModelState.IsValid)
             {
@@ -64,7 +61,6 @@ namespace ProjetoBase64.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["FkUsuario"] = new SelectList(_context.Usuarios, "UsuarioId", "UsuarioId", curriculo.FkUsuario);
             return View(curriculo);
         }
 
@@ -81,7 +77,6 @@ namespace ProjetoBase64.Controllers
             {
                 return NotFound();
             }
-            ViewData["FkUsuario"] = new SelectList(_context.Usuarios, "UsuarioId", "UsuarioId", curriculo.FkUsuario);
             return View(curriculo);
         }
 
@@ -90,7 +85,7 @@ namespace ProjetoBase64.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("CurriculoId,Foto,FkUsuario")] Curriculo curriculo)
+        public async Task<IActionResult> Edit(int id, [Bind("CurriculoId,Nome")] Curriculo curriculo)
         {
             if (id != curriculo.CurriculoId)
             {
@@ -117,7 +112,6 @@ namespace ProjetoBase64.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["FkUsuario"] = new SelectList(_context.Usuarios, "UsuarioId", "UsuarioId", curriculo.FkUsuario);
             return View(curriculo);
         }
 
@@ -130,7 +124,6 @@ namespace ProjetoBase64.Controllers
             }
 
             var curriculo = await _context.Curriculos
-                .Include(c => c.Usuario)
                 .FirstOrDefaultAsync(m => m.CurriculoId == id);
             if (curriculo == null)
             {

@@ -21,7 +21,8 @@ namespace ProjetoBase64.Controllers
         // GET: Usuarios
         public async Task<IActionResult> Index()
         {
-              return View(await _context.Usuarios.ToListAsync());
+            var projectBase64Context = _context.Usuarios.Include(u => u.Curriculo);
+            return View(await projectBase64Context.ToListAsync());
         }
 
         // GET: Usuarios/Details/5
@@ -33,6 +34,7 @@ namespace ProjetoBase64.Controllers
             }
 
             var usuario = await _context.Usuarios
+                .Include(u => u.Curriculo)
                 .FirstOrDefaultAsync(m => m.UsuarioId == id);
             if (usuario == null)
             {
@@ -45,6 +47,7 @@ namespace ProjetoBase64.Controllers
         // GET: Usuarios/Create
         public IActionResult Create()
         {
+            ViewData["FkCurrilo"] = new SelectList(_context.Curriculos, "CurriculoId", "CurriculoId");
             return View();
         }
 
@@ -53,7 +56,7 @@ namespace ProjetoBase64.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("UsuarioId,Nome")] Usuario usuario)
+        public async Task<IActionResult> Create([Bind("UsuarioId,Nome,FkCurrilo")] Usuario usuario)
         {
             if (ModelState.IsValid)
             {
@@ -61,6 +64,7 @@ namespace ProjetoBase64.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["FkCurrilo"] = new SelectList(_context.Curriculos, "CurriculoId", "CurriculoId", usuario.FkCurrilo);
             return View(usuario);
         }
 
@@ -77,6 +81,7 @@ namespace ProjetoBase64.Controllers
             {
                 return NotFound();
             }
+            ViewData["FkCurrilo"] = new SelectList(_context.Curriculos, "CurriculoId", "CurriculoId", usuario.FkCurrilo);
             return View(usuario);
         }
 
@@ -85,7 +90,7 @@ namespace ProjetoBase64.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("UsuarioId,Nome")] Usuario usuario)
+        public async Task<IActionResult> Edit(int id, [Bind("UsuarioId,Nome,FkCurrilo")] Usuario usuario)
         {
             if (id != usuario.UsuarioId)
             {
@@ -112,6 +117,7 @@ namespace ProjetoBase64.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["FkCurrilo"] = new SelectList(_context.Curriculos, "CurriculoId", "CurriculoId", usuario.FkCurrilo);
             return View(usuario);
         }
 
@@ -124,6 +130,7 @@ namespace ProjetoBase64.Controllers
             }
 
             var usuario = await _context.Usuarios
+                .Include(u => u.Curriculo)
                 .FirstOrDefaultAsync(m => m.UsuarioId == id);
             if (usuario == null)
             {

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProjetoBase64.Models;
 
@@ -10,9 +11,10 @@ using ProjetoBase64.Models;
 namespace ProjetoBase64.Migrations
 {
     [DbContext(typeof(ProjectBase64Context))]
-    partial class ProjectBase64ContextModelSnapshot : ModelSnapshot
+    [Migration("20221104022741_RemoveFkUserInCurriculo")]
+    partial class RemoveFkUserInCurriculo
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -24,9 +26,6 @@ namespace ProjetoBase64.Migrations
                     b.Property<int>("CurriculoId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
-
-                    b.Property<string>("Nome")
-                        .HasColumnType("longtext");
 
                     b.HasKey("CurriculoId");
 

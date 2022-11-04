@@ -21,7 +21,7 @@ namespace ProjetoBase64.Controllers
         // GET: Fotos
         public async Task<IActionResult> Index()
         {
-            var projectBase64Context = _context.Fotos.Include(f => f.Usuario);
+            var projectBase64Context = _context.Fotos.Include(f => f.Curriculo);
             return View(await projectBase64Context.ToListAsync());
         }
 
@@ -34,7 +34,7 @@ namespace ProjetoBase64.Controllers
             }
 
             var foto = await _context.Fotos
-                .Include(f => f.Usuario)
+                .Include(f => f.Curriculo)
                 .FirstOrDefaultAsync(m => m.FotoId == id);
             if (foto == null)
             {
@@ -47,7 +47,7 @@ namespace ProjetoBase64.Controllers
         // GET: Fotos/Create
         public IActionResult Create()
         {
-            ViewData["FkUsuario"] = new SelectList(_context.Usuarios, "UsuarioId", "UsuarioId");
+            ViewData["FkCurriculo"] = new SelectList(_context.Curriculos, "CurriculoId", "CurriculoId");
             return View();
         }
 
@@ -56,7 +56,7 @@ namespace ProjetoBase64.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("FotoId,FotoUsuario,FkUsuario")] Foto foto)
+        public async Task<IActionResult> Create([Bind("FotoId,FotoPerfil,FkCurriculo")] Foto foto)
         {
             if (ModelState.IsValid)
             {
@@ -64,7 +64,7 @@ namespace ProjetoBase64.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["FkUsuario"] = new SelectList(_context.Usuarios, "UsuarioId", "UsuarioId", foto.FkUsuario);
+            ViewData["FkCurriculo"] = new SelectList(_context.Curriculos, "CurriculoId", "CurriculoId", foto.FkCurriculo);
             return View(foto);
         }
 
@@ -81,7 +81,7 @@ namespace ProjetoBase64.Controllers
             {
                 return NotFound();
             }
-            ViewData["FkUsuario"] = new SelectList(_context.Usuarios, "UsuarioId", "UsuarioId", foto.FkUsuario);
+            ViewData["FkCurriculo"] = new SelectList(_context.Curriculos, "CurriculoId", "CurriculoId", foto.FkCurriculo);
             return View(foto);
         }
 
@@ -90,7 +90,7 @@ namespace ProjetoBase64.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("FotoId,FotoUsuario,FkUsuario")] Foto foto)
+        public async Task<IActionResult> Edit(int id, [Bind("FotoId,FotoPerfil,FkCurriculo")] Foto foto)
         {
             if (id != foto.FotoId)
             {
@@ -117,7 +117,7 @@ namespace ProjetoBase64.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["FkUsuario"] = new SelectList(_context.Usuarios, "UsuarioId", "UsuarioId", foto.FkUsuario);
+            ViewData["FkCurriculo"] = new SelectList(_context.Curriculos, "CurriculoId", "CurriculoId", foto.FkCurriculo);
             return View(foto);
         }
 
@@ -130,7 +130,7 @@ namespace ProjetoBase64.Controllers
             }
 
             var foto = await _context.Fotos
-                .Include(f => f.Usuario)
+                .Include(f => f.Curriculo)
                 .FirstOrDefaultAsync(m => m.FotoId == id);
             if (foto == null)
             {
@@ -157,6 +157,11 @@ namespace ProjetoBase64.Controllers
             
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+        }
+        public async Task<IActionResult> ListUserFotos(int? id)
+        {
+            var projectBase64Context = _context.Fotos.Where(f => f.FkCurriculo == id).Include(f => f.Curriculo);
+            return View(await projectBase64Context.ToListAsync());
         }
 
         private bool FotoExists(int id)
